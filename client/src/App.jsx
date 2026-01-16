@@ -1,10 +1,19 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './components/LanguageSwitcher';
+import StepRing from './components/StepRing';
+import { getTodaySteps } from './api';
 import './App.css';
 
 export default function App() {
   const { t } = useTranslation();
+  const [stepData, setStepData] = useState({ steps: 0, goal: 10000 });
+
+  useEffect(() => {
+    getTodaySteps()
+      .then(setStepData)
+      .catch((err) => console.error('Failed to fetch steps:', err));
+  }, []);
 
   const todayLabel = useMemo(() => {
     return new Intl.DateTimeFormat(undefined, { month: 'long', day: 'numeric' }).format(new Date());
@@ -58,6 +67,7 @@ export default function App() {
             <h1>{t('homeTitle')}</h1>
             <span className="topbar-date">{todayLabel}</span>
           </div>
+          <StepRing value={stepData.steps} max={stepData.goal} />
           <div className="topbar-actions">
             <LanguageSwitcher />
             <button className="avatar-button" type="button" aria-label={t('profile')}>
