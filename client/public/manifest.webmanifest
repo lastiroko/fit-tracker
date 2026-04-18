@@ -1,0 +1,19 @@
+{
+  "name": "Fit Tracker",
+  "short_name": "Fit Tracker",
+  "description": "Scan meals, track nutrients, hit your daily goals.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f4eedd",
+  "theme_color": "#fbe89a",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

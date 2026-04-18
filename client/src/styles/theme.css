@@ -1,18 +1,34 @@
 :root {
-  --bg: #edf4f5;
-  --bg-muted: #f6faf9;
-  --text: #1c2734;
-  --text-muted: #6c7a86;
-  --text-soft: #85929c;
-  --primary: #67b5ad;
-  --primary-strong: #3fa199;
-  --accent-soft: rgba(103, 181, 173, 0.18);
-  --warning: #f6a06d;
-  --card: #ffffff;
-  --border: rgba(134, 162, 177, 0.18);
-  --shadow: 0 24px 48px rgba(28, 39, 52, 0.12);
-  --radius: 1.5rem;
-  --radius-lg: 2rem;
+  --ink: #1a1a1a;
+  --paper: #fffbf0;
+  --cream: #fdf6e3;
+  --page-bg: #f4eedd;
+
+  --lavender: #e0d4f7;
+  --butter: #fbe89a;
+  --mint: #c8f0d6;
+  --coral: #ffc9bc;
+  --sky: #c5e3f7;
+
+  --chip-orange: #ff9f5a;
+  --chip-teal: #5ec5b9;
+  --chip-green: #7ed88d;
+  --chip-pink: #ff8fa3;
+  --chip-violet: #b794f6;
+
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 22px;
+
+  --border-w: 2px;
+  --shadow-sm: 2px 2px 0 var(--ink);
+  --shadow-md: 4px 4px 0 var(--ink);
+  --shadow-lg: 6px 6px 0 var(--ink);
+
+  --font-display: 'Archivo Black', 'Inter', system-ui, sans-serif;
+  --font-body: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -20,16 +36,6 @@
   --space-4: 1rem;
   --space-5: 1.5rem;
   --space-6: 2rem;
-  --space-7: 2.5rem;
-
-  --fs-xs: 0.75rem;
-  --fs-sm: 0.875rem;
-  --fs-base: 1rem;
-  --fs-lg: 1.125rem;
-  --fs-xl: 1.5rem;
-  --fs-2xl: 1.85rem;
-
-  --hairline: 1px;
 }
 
 * {
@@ -44,21 +50,35 @@ body,
 
 body {
   margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-size: var(--fs-base);
+  background: var(--page-bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
   line-height: 1.5;
-  font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: radial-gradient(rgba(26, 26, 26, 0.13) 1px, transparent 1px);
+  background-size: 22px 22px;
+  opacity: 0.5;
 }
 
 h1,
 h2,
 h3,
 h4 {
-  color: var(--text);
-  line-height: 1.2;
   margin: 0;
+  font-family: var(--font-display);
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  line-height: 1;
 }
 
 p {
@@ -72,50 +92,47 @@ a {
 button {
   font: inherit;
   color: inherit;
-}
-
-button,
-.langswitch button {
   cursor: pointer;
 }
 
-button:focus-visible,
-.langswitch button:focus-visible {
-  outline: 2px solid var(--primary);
+button:focus-visible {
+  outline: 2px solid var(--ink);
   outline-offset: 2px;
 }
 
-.card {
-  background: var(--card);
-  border-radius: var(--radius);
-  border: var(--hairline) solid var(--border);
-  box-shadow: var(--shadow);
-  padding: var(--space-6);
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ink);
 }
 
 .langswitch {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-1);
-  padding: var(--space-1);
-  background: rgba(255, 255, 255, 0.7);
-  border: var(--hairline) solid var(--border);
+  gap: 4px;
+  padding: 3px;
+  background: #fff;
+  border: var(--border-w) solid var(--ink);
   border-radius: 999px;
-  backdrop-filter: blur(8px);
 }
 
 .langswitch button {
   background: transparent;
   border: 0;
-  padding: 0.35rem 0.9rem;
+  padding: 4px 10px;
   border-radius: 999px;
-  color: var(--text-soft);
-  font-weight: 600;
-  transition: all 0.2s ease;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .langswitch button.active {
-  background: var(--card);
-  color: var(--primary-strong);
-  box-shadow: 0 8px 18px rgba(103, 181, 173, 0.18);
+  background: var(--ink);
+  color: var(--butter);
 }
