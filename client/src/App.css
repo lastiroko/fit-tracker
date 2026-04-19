@@ -615,6 +615,222 @@
   cursor: pointer;
 }
 
+/* ───────── Plan view ───────── */
+.plan-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.plan-loading {
+  padding: 24px 0;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.6;
+}
+
+.plan-day {
+  background: #fff;
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  box-shadow: var(--shadow-sm);
+}
+
+.plan-day.today {
+  background: var(--butter);
+}
+
+.plan-day-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.plan-day-label {
+  font-family: var(--font-display);
+  font-size: 18px;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.plan-day-total {
+  text-align: right;
+}
+
+.plan-day-total.over .meal-kcal {
+  color: #b4302a;
+}
+
+.plan-slots {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+
+.plan-slot {
+  background: var(--cream);
+  border: 1.5px solid var(--ink);
+  border-radius: var(--radius-md);
+  padding: 8px 10px;
+  min-height: 70px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+}
+
+.plan-slot.filled {
+  background: #fff;
+}
+
+.plan-slot-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.6;
+}
+
+.plan-slot-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.plan-slot-name {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.plan-slot-meta {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.plan-slot-add {
+  all: unset;
+  cursor: pointer;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0.6;
+}
+
+.plan-slot .meal-delete {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 22px;
+  height: 22px;
+  font-size: 13px;
+  margin: 0;
+}
+
+/* ───────── Meal picker modal ───────── */
+.picker-modal {
+  max-width: 420px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.picker-categories {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.picker-search {
+  width: 100%;
+  padding: 10px 12px;
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 14px;
+  background: #fff;
+}
+
+.picker-search:focus {
+  outline: none;
+  box-shadow: var(--shadow-sm);
+}
+
+.picker-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.picker-empty {
+  padding: 20px 0;
+  text-align: center;
+  opacity: 0.6;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.picker-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1.5px solid var(--ink);
+  border-radius: var(--radius-md);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.picker-item:hover {
+  background: var(--butter);
+}
+
+.picker-item-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.picker-item-name {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.picker-item-meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-top: 2px;
+}
+
+.picker-item-kcal {
+  text-align: right;
+}
+
 .meal-row {
   display: flex;
   align-items: center;

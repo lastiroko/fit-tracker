@@ -7,6 +7,7 @@ import SettingsModal from './components/SettingsModal';
 import StepEditorModal from './components/StepEditorModal';
 import WeekChart from './components/WeekChart';
 import QuickLogStrip from './components/QuickLogStrip';
+import PlanView from './components/PlanView';
 import ScannerModal from './components/scanner/ScannerModal';
 import {
   getTodaySteps,
@@ -354,8 +355,9 @@ export default function App() {
 
   const tabs = [
     { key: 'home', label: t('tabHome'), color: 'butter' },
-    { key: 'meals', label: t('tabMeals'), color: 'coral' },
+    { key: 'plan', label: t('tabPlan'), color: 'sky' },
     { key: 'scan', label: t('tabScan'), color: 'mint' },
+    { key: 'meals', label: t('tabMeals'), color: 'coral' },
     { key: 'you', label: t('tabYou'), color: 'lavender' },
   ];
 
@@ -531,6 +533,10 @@ export default function App() {
           )}
         </section>
         </>
+        )}
+
+        {view === 'plan' && (
+          <PlanView calorieGoal={settings.calorieGoal} />
         )}
 
         {view === 'meals' && (

@@ -132,6 +132,28 @@ export async function removeFavorite(id) {
   if (!r.ok && r.status !== 404) throw new Error(`${r.status}`);
 }
 
+export async function getPlannedMeals(startIso, endIso) {
+  const r = await fetch(`${BASE}/plan?start=${startIso}&end=${endIso}`, fetchOpts);
+  if (!r.ok) throw new Error(`${r.status}`);
+  return r.json();
+}
+
+export async function addPlannedMeal(body) {
+  const r = await fetch(`${BASE}/plan`, {
+    ...fetchOpts,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  if (!r.ok) throw new Error(`${r.status}`);
+  return r.json();
+}
+
+export async function removePlannedMeal(id) {
+  const r = await fetch(`${BASE}/plan/${id}`, { ...fetchOpts, method: 'DELETE' });
+  if (!r.ok && r.status !== 404) throw new Error(`${r.status}`);
+}
+
 function formatMealMeta(meal) {
   const d = meal.createdAt ? new Date(meal.createdAt) : null;
   if (!d || isNaN(d.getTime())) return meal.servingSize || '';
