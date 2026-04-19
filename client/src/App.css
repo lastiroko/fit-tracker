@@ -369,6 +369,54 @@
   gap: 8px;
 }
 
+.meal-empty {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 14px;
+  background: var(--cream);
+  border: var(--border-w) dashed var(--ink);
+  border-radius: var(--radius-md);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.meal-empty:hover {
+  background: var(--butter);
+}
+
+.meal-empty-title {
+  font-family: var(--font-display);
+  font-size: 16px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.meal-empty-hint {
+  font-size: 12px;
+  opacity: 0.75;
+  margin-top: 3px;
+  line-height: 1.35;
+}
+
+.meal-empty-arrow {
+  margin-left: auto;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  background: var(--ink);
+  color: var(--butter);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 16px;
+}
+
 .meal-row {
   display: flex;
   align-items: center;

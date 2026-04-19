@@ -206,37 +206,6 @@ export default function App() {
     ];
   }, [t, dailyStats, stepData]);
 
-  const meals = useMemo(
-    () => [
-      {
-        key: 'salmon',
-        title: t('mealSalmon'),
-        meta: t('mealSalmonDetail'),
-        chips: [
-          { label: t('mealTagDetox'), color: 'chip-violet' },
-          { label: t('mealTagOmega'), color: 'chip-teal' },
-        ],
-        kcal: '540',
-        action: t('buy'),
-      },
-      {
-        key: 'salad',
-        title: t('mealSalad'),
-        meta: t('mealSaladDetail'),
-        chips: [{ label: t('mealTagGreens'), color: 'chip-green' }],
-        kcal: '320',
-      },
-      {
-        key: 'oat',
-        title: t('mealOatLatte'),
-        meta: t('mealOatLatteDetail'),
-        chips: [{ label: t('mealTagLowSugar'), color: 'chip-orange' }],
-        kcal: '180',
-      },
-    ],
-    [t],
-  );
-
   const tabs = [
     { key: 'home', label: t('tabHome'), active: true, color: 'butter' },
     { key: 'meals', label: t('tabMeals'), color: 'coral' },
@@ -318,7 +287,7 @@ export default function App() {
                 {t('mealLog')}
               </h2>
               <div className="eyebrow" style={{ marginTop: 2, opacity: 0.7 }}>
-                {t('mealCaloriesToday')}
+                {t('mealCaloriesToday', { kcal: dailyStats.calories.toLocaleString() })}
               </div>
             </div>
             <button
@@ -330,25 +299,37 @@ export default function App() {
             </button>
           </div>
 
-          <ul className="meal-log-list">
-            {scannedMeals.map((meal) => (
-              <MealRow
-                key={meal.id ?? `scanned-${meal.createdAt}-${meal.name}`}
-                title={meal.name}
-                meta={formatMealMeta(meal)}
-                kcal={meal.calories}
-                chips={[
-                  {
-                    label: meal.source === 'barcode' ? t('sourceBarcode') : t('sourceAI'),
-                    color: meal.source === 'barcode' ? 'chip-teal' : 'chip-violet',
-                  },
-                ]}
-              />
-            ))}
-            {meals.map((m) => (
-              <MealRow key={m.key} {...m} />
-            ))}
-          </ul>
+          {scannedMeals.length === 0 ? (
+            <button
+              type="button"
+              className="meal-empty"
+              onClick={() => setScannerOpen(true)}
+            >
+              <div className="icon-badge sm">{Glyph.scan}</div>
+              <div>
+                <div className="meal-empty-title">{t('mealEmptyTitle')}</div>
+                <div className="meal-empty-hint">{t('mealEmptyHint')}</div>
+              </div>
+              <span className="meal-empty-arrow" aria-hidden="true">→</span>
+            </button>
+          ) : (
+            <ul className="meal-log-list">
+              {scannedMeals.map((meal) => (
+                <MealRow
+                  key={meal.id ?? `scanned-${meal.createdAt}-${meal.name}`}
+                  title={meal.name}
+                  meta={formatMealMeta(meal)}
+                  kcal={meal.calories}
+                  chips={[
+                    {
+                      label: meal.source === 'barcode' ? t('sourceBarcode') : t('sourceAI'),
+                      color: meal.source === 'barcode' ? 'chip-teal' : 'chip-violet',
+                    },
+                  ]}
+                />
+              ))}
+            </ul>
+          )}
         </section>
 
         {/* Bottom tab bar */}
