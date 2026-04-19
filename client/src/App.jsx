@@ -11,6 +11,7 @@ import {
   saveMeal,
   getTodayMeals,
   getTodayStats,
+  getWeekStats,
   deleteMeal,
   setTodaySteps,
   getWeekSteps,
@@ -140,6 +141,7 @@ export default function App() {
   const { t } = useTranslation();
   const [stepData, setStepData] = useState({ steps: 0, goal: 10000 });
   const [weekSteps, setWeekSteps] = useState([]);
+  const [weekStats, setWeekStats] = useState([]);
   const [scannerOpen, setScannerOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [stepEditorOpen, setStepEditorOpen] = useState(false);
@@ -172,6 +174,9 @@ export default function App() {
     getTodayStats()
       .then(setDailyStats)
       .catch((err) => console.error('Failed to fetch stats:', err));
+    getWeekStats()
+      .then(setWeekStats)
+      .catch((err) => console.error('Failed to fetch week stats:', err));
   }, []);
 
   async function handleStepsSave(count) {
@@ -187,7 +192,9 @@ export default function App() {
 
   async function refreshStats() {
     try {
-      setDailyStats(await getTodayStats());
+      const [today, week] = await Promise.all([getTodayStats(), getWeekStats()]);
+      setDailyStats(today);
+      setWeekStats(week);
     } catch (err) {
       console.error('Failed to refresh stats:', err);
     }
@@ -327,7 +334,23 @@ export default function App() {
             <span className="step-ring-edit">{t('stepsEditHint')}</span>
           </button>
 
-          <WeekChart days={weekSteps} goal={settings.stepGoal} />
+          <WeekChart
+            days={weekSteps.map((d) => ({ date: d.date, value: d.count }))}
+            goal={settings.stepGoal}
+            title={t('weekStepsTitle')}
+            goalLabel={t('weekStepsGoal', { goal: settings.stepGoal.toLocaleString() })}
+          />
+
+          <WeekChart
+            days={weekStats.map((d) => ({ date: d.date, value: d.nutrientScore }))}
+            goal={70}
+            yMaxFloor={100}
+            title={t('weekNutrientsTitle')}
+            goalLabel={t('weekNutrientsGoal')}
+            barColor="var(--mint)"
+            todayColor="var(--chip-green)"
+            format={(n) => `${n}%`}
+          />
         </header>
 
         {/* Scan CTA */}

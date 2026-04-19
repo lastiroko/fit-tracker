@@ -77,6 +77,12 @@ export async function getTodayStats() {
   return r.json();
 }
 
+export async function getWeekStats() {
+  const r = await fetch(`${BASE}/stats/week?tz=${encodeURIComponent(clientTimezone())}`);
+  if (!r.ok) throw new Error(`${r.status}`);
+  return r.json();
+}
+
 function formatMealMeta(meal) {
   const d = meal.createdAt ? new Date(meal.createdAt) : null;
   if (!d || isNaN(d.getTime())) return meal.servingSize || '';
