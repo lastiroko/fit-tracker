@@ -7,6 +7,7 @@ import com.example.fittracker.repository.MealRepository;
 import com.example.fittracker.service.NutritionScoringService;
 import com.example.fittracker.service.NutritionScoringService.Scores;
 import com.example.fittracker.util.DayRange;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,5 +38,14 @@ public class MealController {
             .stream()
             .map(MealEntry::fromEntity)
             .toList();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteMeal(@PathVariable Long id) {
+        if (!repo.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        repo.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

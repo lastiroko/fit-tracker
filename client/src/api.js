@@ -44,6 +44,11 @@ export async function saveMeal(meal) {
   return r.json();
 }
 
+export async function deleteMeal(id) {
+  const r = await fetch(`${BASE}/meals/${id}`, { method: 'DELETE' });
+  if (!r.ok && r.status !== 404) throw new Error(`${r.status}`);
+}
+
 export async function getTodayMeals() {
   const r = await fetch(`${BASE}/meals/today?tz=${encodeURIComponent(clientTimezone())}`);
   if (!r.ok) throw new Error(`${r.status}`);

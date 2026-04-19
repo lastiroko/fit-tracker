@@ -3,7 +3,14 @@ import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import StepRing from './components/StepRing';
 import ScannerModal from './components/scanner/ScannerModal';
-import { getTodaySteps, saveMeal, getTodayMeals, getTodayStats, formatMealMeta } from './api';
+import {
+  getTodaySteps,
+  saveMeal,
+  getTodayMeals,
+  getTodayStats,
+  deleteMeal,
+  formatMealMeta,
+} from './api';
 import './App.css';
 
 const INK = '#1a1a1a';
@@ -72,7 +79,7 @@ function StatCard({ bg, icon, eyebrow, value, detail, chip, chipColor }) {
   );
 }
 
-function MealRow({ title, meta, chips = [], kcal, action }) {
+function MealRow({ title, meta, chips = [], kcal, onDelete }) {
   return (
     <li className="meal-row">
       <div className="meal-thumb" aria-hidden="true" />
@@ -92,12 +99,17 @@ function MealRow({ title, meta, chips = [], kcal, action }) {
       <div className="meal-right">
         <div className="meal-kcal">{kcal}</div>
         <div className="kcal-label">kcal</div>
-        {action && (
-          <button type="button" className="meal-action">
-            {action}
-          </button>
-        )}
       </div>
+      {onDelete && (
+        <button
+          type="button"
+          className="meal-delete"
+          onClick={onDelete}
+          aria-label="Delete meal"
+        >
+          ×
+        </button>
+      )}
     </li>
   );
 }
@@ -143,6 +155,18 @@ export default function App() {
     } catch (err) {
       console.error('Failed to save meal:', err);
       setScannedMeals((prev) => [scanResult, ...prev]);
+    }
+  }
+
+  async function handleMealDelete(meal) {
+    if (!meal.id) return;
+    if (!window.confirm(t('confirmDeleteMeal', { name: meal.name }))) return;
+    try {
+      await deleteMeal(meal.id);
+      setScannedMeals((prev) => prev.filter((m) => m.id !== meal.id));
+      refreshStats();
+    } catch (err) {
+      console.error('Failed to delete meal:', err);
     }
   }
 
@@ -326,6 +350,7 @@ export default function App() {
                       color: meal.source === 'barcode' ? 'chip-teal' : 'chip-violet',
                     },
                   ]}
+                  onDelete={meal.id ? () => handleMealDelete(meal) : undefined}
                 />
               ))}
             </ul>
