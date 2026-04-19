@@ -1,6 +1,8 @@
-// In production Vercel rewrites /api/* → Fly, so relative paths are same-origin
-// and session cookies flow without CORS gymnastics. In local dev point at Spring Boot.
-const BASE = import.meta.env.VITE_API_BASE || '/api';
+// Production always goes through Vercel's /api proxy so session cookies are
+// same-origin. Dev uses localhost by default, overridable via VITE_API_BASE.
+const BASE = import.meta.env.PROD
+  ? '/api'
+  : (import.meta.env.VITE_API_BASE || 'http://localhost:8080/api');
 
 const fetchOpts = { credentials: 'same-origin' };
 
