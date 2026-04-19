@@ -36,6 +36,25 @@
   --space-4: 1rem;
   --space-5: 1.5rem;
   --space-6: 2rem;
+
+  /* Legacy aliases used by ScannerModal.css — remap to the new palette
+     so the scanner UI keeps rendering until we redesign it. */
+  --card: #ffffff;
+  --border: rgba(26, 26, 26, 0.18);
+  --bg-muted: var(--cream);
+  --text: var(--ink);
+  --text-muted: rgba(26, 26, 26, 0.65);
+  --text-soft: rgba(26, 26, 26, 0.55);
+  --primary: var(--chip-teal);
+  --primary-strong: var(--ink);
+  --accent-soft: var(--butter);
+  --radius: 16px;
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-base: 1rem;
+  --fs-lg: 1.125rem;
+  --fs-xl: 1.25rem;
+  --fs-2xl: 1.75rem;
 }
 
 * {
