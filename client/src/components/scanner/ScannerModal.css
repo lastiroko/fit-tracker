@@ -1,91 +1,103 @@
 .scanner-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(26, 26, 26, 0.45);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: var(--space-4);
+  padding: 16px;
 }
 
 .scanner-modal {
-  background: var(--card);
-  border-radius: var(--radius-lg);
-  width: min(100%, 24rem);
-  max-height: 90vh;
+  background: var(--paper);
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  width: min(100%, 420px);
+  max-height: 92vh;
   overflow-y: auto;
-  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.25);
   display: flex;
   flex-direction: column;
 }
 
+/* ───────── Header ───────── */
 .scanner-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--space-4) var(--space-5);
-  border-bottom: 1px solid var(--border);
+  padding: 18px 20px;
+  border-bottom: var(--border-w) solid var(--ink);
+  background: var(--butter);
+  border-top-left-radius: calc(var(--radius-xl) - 2px);
+  border-top-right-radius: calc(var(--radius-xl) - 2px);
 }
 
 .scanner-header h2 {
-  font-size: var(--fs-lg);
-  font-weight: 700;
-  margin: 0;
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
 }
 
 .close-btn {
-  width: 2rem;
-  height: 2rem;
-  border: 0;
-  background: var(--bg-muted);
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid var(--ink);
+  background: #fff;
   border-radius: 50%;
-  font-size: 1.25rem;
-  line-height: 1;
-  color: var(--text-muted);
-  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: 18px;
+  color: var(--ink);
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 
-.close-btn:hover {
-  background: var(--border);
-  color: var(--text);
+.close-btn:active {
+  transform: scale(0.94);
 }
 
+/* ───────── Mode selector ───────── */
 .scan-mode-selector {
   display: flex;
-  gap: var(--space-2);
-  padding: var(--space-3) var(--space-5);
-  background: var(--bg-muted);
+  gap: 8px;
+  padding: 14px 16px;
+  background: var(--cream);
+  border-bottom: var(--border-w) solid var(--ink);
 }
 
 .mode-btn {
   flex: 1;
-  padding: var(--space-2) var(--space-3);
-  border: 0;
-  border-radius: var(--radius);
-  background: transparent;
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  color: var(--text-muted);
+  padding: 10px 14px;
+  border: var(--border-w) solid var(--ink);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
 }
 
 .mode-btn.active {
-  background: var(--card);
-  color: var(--primary-strong);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background: var(--ink);
+  color: var(--butter);
+  box-shadow: var(--shadow-sm);
 }
 
+/* ───────── Scanner viewport ───────── */
 .scanner-content {
   position: relative;
   aspect-ratio: 4 / 3;
-  background: #000;
+  background: var(--ink);
   overflow: hidden;
+  margin: 14px 16px 0;
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius-md);
 }
 
 .camera-view {
@@ -108,8 +120,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
-  background: rgba(0, 0, 0, 0.5);
+  color: var(--butter);
+  background: rgba(26, 26, 26, 0.7);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
 }
 
 .camera-error {
@@ -118,37 +135,42 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-4);
+  padding: 24px;
   text-align: center;
-  color: var(--text-muted);
-  background: var(--bg-muted);
+  color: var(--ink);
+  background: var(--coral);
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .scanner-loading-bar {
-  padding: var(--space-3);
+  margin: 12px 16px 0;
+  padding: 12px 14px;
+  background: var(--butter);
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
   text-align: center;
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  color: var(--primary-strong);
-  background: var(--accent-soft);
+  color: var(--ink);
 }
 
+/* ───────── Capture button (photo mode) ───────── */
 .capture-btn {
   position: absolute;
-  bottom: var(--space-4);
+  bottom: 14px;
   left: 50%;
   transform: translateX(-50%);
-  width: 4rem;
-  height: 4rem;
-  border: 4px solid #fff;
+  width: 64px;
+  height: 64px;
+  border: 3px solid var(--ink);
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--coral);
+  box-shadow: 0 0 0 4px #fff, var(--shadow-sm);
   cursor: pointer;
-  transition: transform 0.15s;
-}
-
-.capture-btn:hover {
-  transform: translateX(-50%) scale(1.08);
 }
 
 .capture-btn:active {
@@ -160,179 +182,221 @@
   cursor: not-allowed;
 }
 
+/* ───────── Scan results ───────── */
 .scan-results {
-  padding: var(--space-5);
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: 16px;
 }
 
 .result-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: var(--space-3);
+  gap: 12px;
 }
 
 .result-name {
-  font-size: var(--fs-lg);
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-size: 22px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--ink);
   margin: 0;
 }
 
 .result-brand {
-  font-size: var(--fs-sm);
-  color: var(--text-muted);
-  margin: 0.25rem 0 0;
+  font-size: 12px;
+  color: var(--ink);
+  opacity: 0.7;
+  margin: 4px 0 0;
 }
 
 .result-confidence {
-  font-size: var(--fs-xs);
-  color: var(--text-soft);
-  padding: 0.2rem 0.5rem;
-  background: var(--bg-muted);
+  display: inline-block;
+  padding: 4px 10px;
+  background: var(--mint);
+  border: 1.5px solid var(--ink);
   border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0.06em;
 }
 
 .result-source {
-  font-size: var(--fs-xs);
-  color: var(--text-soft);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--ink);
+  opacity: 0.7;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
+  margin: 6px 0 0;
 }
 
+/* ───────── Nutrition grid ───────── */
 .nutrition-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-3);
+  gap: 10px;
 }
 
 .nutrition-item {
-  padding: var(--space-3);
-  background: var(--bg-muted);
-  border-radius: calc(var(--radius) - 0.5rem);
+  padding: 14px 12px;
+  background: #fff;
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius-md);
   text-align: center;
+}
+
+.nutrition-item.calories {
+  background: var(--coral);
+  grid-column: span 2;
+  padding: 18px 12px;
 }
 
 .nutrition-value {
-  font-size: var(--fs-xl);
-  font-weight: 700;
-  color: var(--primary-strong);
+  font-family: var(--font-display);
+  font-size: 22px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
 }
 
 .nutrition-item.calories .nutrition-value {
-  font-size: var(--fs-2xl);
+  font-size: 34px;
 }
 
 .nutrition-label {
-  font-size: var(--fs-xs);
-  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--ink);
+  opacity: 0.7;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-top: 0.25rem;
+  letter-spacing: 0.12em;
+  margin-top: 4px;
 }
 
 .serving-size {
-  font-size: var(--fs-sm);
-  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink);
+  opacity: 0.7;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
   text-align: center;
 }
 
+/* ───────── Result actions ───────── */
 .result-actions {
   display: flex;
-  gap: var(--space-3);
-  margin-top: var(--space-2);
+  gap: 8px;
 }
 
 .result-actions button {
   flex: 1;
-  padding: var(--space-3);
-  border: 0;
-  border-radius: var(--radius);
-  font-size: var(--fs-sm);
-  font-weight: 600;
+  padding: 12px 14px;
+  border: var(--border-w) solid var(--ink);
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: -0.01em;
   cursor: pointer;
 }
 
 .btn-secondary {
-  background: var(--bg-muted);
-  color: var(--text);
-}
-
-.btn-secondary:hover {
-  background: var(--border);
+  background: #fff;
+  color: var(--ink);
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary), var(--primary-strong));
-  color: #fff;
-  box-shadow: 0 8px 20px rgba(63, 161, 153, 0.3);
+  background: var(--ink);
+  color: var(--butter);
+  box-shadow: var(--shadow-sm);
 }
 
-.btn-primary:hover {
-  box-shadow: 0 12px 24px rgba(63, 161, 153, 0.4);
+.btn-primary:active,
+.btn-secondary:active {
+  transform: translate(1px, 1px);
+  box-shadow: none;
 }
 
+/* ───────── Food editor ───────── */
 .food-editor {
-  padding: var(--space-5);
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: 14px;
 }
 
 .editor-title {
-  font-size: var(--fs-lg);
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-size: 20px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
   margin: 0;
 }
 
 .editor-field {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  gap: 4px;
 }
 
 .editor-field label {
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ink);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
 }
 
 .editor-field input {
-  padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--border);
-  border-radius: calc(var(--radius) - 0.5rem);
-  font-size: var(--fs-base);
-  background: var(--card);
+  padding: 10px 12px;
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
+  background: #fff;
+  color: var(--ink);
 }
 
 .editor-field input:focus {
   outline: none;
-  border-color: var(--primary);
+  box-shadow: var(--shadow-sm);
 }
 
 .editor-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-3);
+  gap: 8px;
 }
 
 .editor-actions {
   display: flex;
-  gap: var(--space-3);
-  margin-top: var(--space-2);
+  gap: 8px;
+  margin-top: 4px;
 }
 
 .editor-actions button {
   flex: 1;
-  padding: var(--space-3);
-  border: 0;
-  border-radius: var(--radius);
-  font-size: var(--fs-sm);
-  font-weight: 600;
+  padding: 12px 14px;
+  border: var(--border-w) solid var(--ink);
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: -0.01em;
   cursor: pointer;
 }
 
+/* ───────── Barcode scanner viewport overrides ───────── */
 .barcode-reader {
   width: 100%;
   height: 100%;
