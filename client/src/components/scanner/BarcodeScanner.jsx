@@ -2,8 +2,6 @@ import { useEffect, useRef } from 'react';
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import { scanBarcode } from '../../api';
 
-// Product-barcode formats only — narrower set = faster + more reliable decode,
-// especially on iPhone Safari where the default "every format" sweep stalls.
 const PRODUCT_FORMATS = [
   Html5QrcodeSupportedFormats.EAN_13,
   Html5QrcodeSupportedFormats.EAN_8,
@@ -12,6 +10,18 @@ const PRODUCT_FORMATS = [
   Html5QrcodeSupportedFormats.CODE_128,
   Html5QrcodeSupportedFormats.CODE_39,
 ];
+
+async function safeStop(scanner) {
+  if (!scanner) return;
+  try {
+    if (scanner.isScanning) {
+      await scanner.stop();
+    }
+  } catch {
+    // Library throws "Cannot stop, scanner is not running or paused" when
+    // stop() races with a pending callback. Swallow — we only care that it's stopped.
+  }
+}
 
 export default function BarcodeScanner({ onResult, onLoading }) {
   const scannerRef = useRef(null);
@@ -48,8 +58,8 @@ export default function BarcodeScanner({ onResult, onLoading }) {
             scanningRef.current = true;
 
             onLoading(true);
+            await safeStop(scanner);
             try {
-              await scanner.stop();
               const result = await scanBarcode(decodedText);
               if (mountedRef.current) {
                 onResult(result);
@@ -74,7 +84,7 @@ export default function BarcodeScanner({ onResult, onLoading }) {
 
     return () => {
       mountedRef.current = false;
-      scanner.stop().catch(() => {});
+      safeStop(scanner);
     };
   }, [onResult, onLoading]);
 
