@@ -71,6 +71,12 @@ export async function getTodayMeals() {
   return r.json();
 }
 
+export async function getRecentMeals(days = 30) {
+  const r = await fetch(`${BASE}/meals?days=${days}`);
+  if (!r.ok) throw new Error(`${r.status}`);
+  return r.json();
+}
+
 export async function getTodayStats() {
   const r = await fetch(`${BASE}/stats/today?tz=${encodeURIComponent(clientTimezone())}`);
   if (!r.ok) throw new Error(`${r.status}`);

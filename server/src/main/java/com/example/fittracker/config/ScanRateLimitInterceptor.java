@@ -2,6 +2,8 @@ package com.example.fittracker.config;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -18,6 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class ScanRateLimitInterceptor implements HandlerInterceptor {
 
+    private static final Logger log = LoggerFactory.getLogger(ScanRateLimitInterceptor.class);
     private static final int LIMIT_PER_WINDOW = 30;
     private static final long WINDOW_MS = 60L * 60L * 1000L; // 1 hour
 
@@ -35,6 +38,8 @@ public class ScanRateLimitInterceptor implements HandlerInterceptor {
             }
             return new Window(prev.startMs, prev.count + 1);
         });
+
+        log.info("scan-rl path={} ip={} count={}/{}", request.getRequestURI(), key, current.count, LIMIT_PER_WINDOW);
 
         if (current.count > LIMIT_PER_WINDOW) {
             long retryAfterSec = Math.max(1, (current.startMs + WINDOW_MS - now) / 1000);

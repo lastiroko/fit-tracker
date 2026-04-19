@@ -684,6 +684,127 @@
   align-items: center;
 }
 
+/* ───────── Non-home view headers ───────── */
+.view-header {
+  padding: 44px 18px 8px;
+  background: var(--lavender);
+  border-bottom: var(--border-w) solid var(--ink);
+}
+
+.view-title {
+  font-family: var(--font-display);
+  font-size: 36px;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  margin: 6px 0 14px;
+}
+
+.day-group {
+  margin-bottom: 18px;
+}
+
+.day-group-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+/* ───────── You view ───────── */
+.you-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.you-profile-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px;
+  background: #fff;
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.you-portrait {
+  margin: 0;
+  width: 64px;
+  height: 64px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.you-name {
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin-top: 4px;
+}
+
+.you-profile-card .scan-arrow {
+  width: 36px;
+  height: 36px;
+  font-size: 16px;
+  margin-left: auto;
+}
+
+.you-goal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.you-goal-card {
+  padding: 14px;
+  background: var(--butter);
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.you-goal-card:nth-child(2) {
+  background: var(--mint);
+}
+
+.you-goal-value {
+  font-family: var(--font-display);
+  font-size: 26px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-top: 6px;
+}
+
+.you-lang-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  background: #fff;
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius-md);
+}
+
+.you-edit-btn {
+  padding: 14px 18px;
+  background: var(--ink);
+  color: var(--butter);
+  border: var(--border-w) solid var(--ink);
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+}
+
 /* ───────── Settings modal ───────── */
 .settings-overlay {
   position: fixed;

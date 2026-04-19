@@ -15,6 +15,7 @@ import {
   deleteMeal,
   setTodaySteps,
   getWeekSteps,
+  getRecentMeals,
   formatMealMeta,
 } from './api';
 import './App.css';
@@ -142,6 +143,8 @@ export default function App() {
   const [stepData, setStepData] = useState({ steps: 0, goal: 10000 });
   const [weekSteps, setWeekSteps] = useState([]);
   const [weekStats, setWeekStats] = useState([]);
+  const [allMeals, setAllMeals] = useState([]);
+  const [view, setView] = useState('home');
   const [scannerOpen, setScannerOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [stepEditorOpen, setStepEditorOpen] = useState(false);
@@ -200,6 +203,13 @@ export default function App() {
     }
   }
 
+  useEffect(() => {
+    if (view !== 'meals') return;
+    getRecentMeals(30)
+      .then(setAllMeals)
+      .catch((err) => console.error('Failed to fetch all meals:', err));
+  }, [view]);
+
   async function handleMealAdded(scanResult) {
     try {
       const saved = await saveMeal(scanResult);
@@ -217,11 +227,29 @@ export default function App() {
     try {
       await deleteMeal(meal.id);
       setScannedMeals((prev) => prev.filter((m) => m.id !== meal.id));
+      setAllMeals((prev) => prev.filter((m) => m.id !== meal.id));
       refreshStats();
     } catch (err) {
       console.error('Failed to delete meal:', err);
     }
   }
+
+  const mealsByDate = useMemo(() => {
+    const groups = new Map();
+    for (const m of allMeals) {
+      if (!m.createdAt) continue;
+      const d = new Date(m.createdAt);
+      const label = new Intl.DateTimeFormat(undefined, {
+        weekday: 'long',
+        month: 'short',
+        day: 'numeric',
+      }).format(d);
+      const key = d.toISOString().slice(0, 10);
+      if (!groups.has(key)) groups.set(key, { key, label, meals: [] });
+      groups.get(key).meals.push(m);
+    }
+    return [...groups.values()];
+  }, [allMeals]);
 
   const todayLabel = useMemo(
     () =>
@@ -284,15 +312,25 @@ export default function App() {
   }, [t, dailyStats, stepData, settings]);
 
   const tabs = [
-    { key: 'home', label: t('tabHome'), active: true, color: 'butter' },
+    { key: 'home', label: t('tabHome'), color: 'butter' },
     { key: 'meals', label: t('tabMeals'), color: 'coral' },
     { key: 'scan', label: t('tabScan'), color: 'mint' },
     { key: 'you', label: t('tabYou'), color: 'lavender' },
   ];
 
+  function handleTabClick(key) {
+    if (key === 'scan') {
+      setScannerOpen(true);
+      return;
+    }
+    setView(key);
+  }
+
   return (
     <div className="app-page">
       <main className="app-shell">
+        {view === 'home' && (
+        <>
         {/* Header block */}
         <header className="header-block">
           <div className="nav-row">
@@ -440,6 +478,114 @@ export default function App() {
             </ul>
           )}
         </section>
+        </>
+        )}
+
+        {view === 'meals' && (
+          <>
+            <header className="view-header">
+              <div className="eyebrow">{t('viewMealsEyebrow')}</div>
+              <h1 className="view-title">{t('viewMealsTitle')}</h1>
+            </header>
+            <section className="section">
+              {mealsByDate.length === 0 ? (
+                <button
+                  type="button"
+                  className="meal-empty"
+                  onClick={() => setScannerOpen(true)}
+                >
+                  <div className="icon-badge sm">{Glyph.scan}</div>
+                  <div>
+                    <div className="meal-empty-title">{t('mealEmptyTitle')}</div>
+                    <div className="meal-empty-hint">{t('mealEmptyHint')}</div>
+                  </div>
+                  <span className="meal-empty-arrow" aria-hidden="true">→</span>
+                </button>
+              ) : (
+                mealsByDate.map((group) => (
+                  <div key={group.key} className="day-group">
+                    <div className="day-group-head">
+                      <div className="section-title">{group.label}</div>
+                      <div className="eyebrow" style={{ opacity: 0.7 }}>
+                        {t('mealCaloriesToday', {
+                          kcal: group.meals.reduce((a, m) => a + (m.calories || 0), 0).toLocaleString(),
+                        })}
+                      </div>
+                    </div>
+                    <ul className="meal-log-list">
+                      {group.meals.map((meal) => (
+                        <MealRow
+                          key={meal.id}
+                          title={meal.name}
+                          meta={formatMealMeta(meal)}
+                          kcal={meal.calories}
+                          chips={[
+                            {
+                              label: meal.source === 'barcode' ? t('sourceBarcode') : t('sourceAI'),
+                              color: meal.source === 'barcode' ? 'chip-teal' : 'chip-violet',
+                            },
+                          ]}
+                          onDelete={() => handleMealDelete(meal)}
+                        />
+                      ))}
+                    </ul>
+                  </div>
+                ))
+              )}
+            </section>
+          </>
+        )}
+
+        {view === 'you' && (
+          <>
+            <header className="view-header">
+              <div className="eyebrow">{t('viewYouEyebrow')}</div>
+              <h1 className="view-title">{t('settingsTitle')}</h1>
+            </header>
+            <section className="section you-section">
+              <button
+                type="button"
+                className="you-profile-card"
+                onClick={() => setSettingsOpen(true)}
+              >
+                <div className="pixel-portrait you-portrait" aria-hidden="true">
+                  <img src="/pixel-portrait.png" alt="" />
+                </div>
+                <div>
+                  <div className="eyebrow">{t('settingsName')}</div>
+                  <div className="you-name">{settings.name}</div>
+                </div>
+                <span className="scan-arrow" aria-hidden="true">→</span>
+              </button>
+
+              <div className="you-goal-grid">
+                <div className="you-goal-card">
+                  <div className="eyebrow">{t('settingsCalorieGoal')}</div>
+                  <div className="you-goal-value">{settings.calorieGoal.toLocaleString()}</div>
+                  <div className="kcal-label">kcal / day</div>
+                </div>
+                <div className="you-goal-card">
+                  <div className="eyebrow">{t('settingsStepGoal')}</div>
+                  <div className="you-goal-value">{settings.stepGoal.toLocaleString()}</div>
+                  <div className="kcal-label">steps / day</div>
+                </div>
+              </div>
+
+              <div className="you-lang-row">
+                <div className="eyebrow">{t('language')}</div>
+                <LanguageSwitcher />
+              </div>
+
+              <button
+                type="button"
+                className="you-edit-btn"
+                onClick={() => setSettingsOpen(true)}
+              >
+                {t('settingsTitle')} →
+              </button>
+            </section>
+          </>
+        )}
 
         {/* Bottom tab bar */}
         <nav className="tab-bar" aria-label="Primary">
@@ -447,8 +593,9 @@ export default function App() {
             <button
               key={tab.key}
               type="button"
-              className={`tab${tab.active ? ' active' : ''}`}
+              className={`tab${view === tab.key ? ' active' : ''}`}
               style={{ '--tab-color': `var(--${tab.color})` }}
+              onClick={() => handleTabClick(tab.key)}
             >
               {tab.label}
             </button>
