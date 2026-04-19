@@ -6,6 +6,7 @@ import StepRing from './components/StepRing';
 import SettingsModal from './components/SettingsModal';
 import StepEditorModal from './components/StepEditorModal';
 import WeekChart from './components/WeekChart';
+import QuickLogStrip from './components/QuickLogStrip';
 import ScannerModal from './components/scanner/ScannerModal';
 import {
   getTodaySteps,
@@ -19,6 +20,8 @@ import {
   getRecentMeals,
   getCurrentUser,
   logout,
+  getFavorites,
+  removeFavorite,
   formatMealMeta,
 } from './api';
 import './App.css';
@@ -147,6 +150,7 @@ export default function App() {
   const [weekSteps, setWeekSteps] = useState([]);
   const [weekStats, setWeekStats] = useState([]);
   const [allMeals, setAllMeals] = useState([]);
+  const [favorites, setFavorites] = useState([]);
   const [view, setView] = useState('home');
   const [scannerOpen, setScannerOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -194,6 +198,9 @@ export default function App() {
     getWeekStats()
       .then(setWeekStats)
       .catch((err) => console.error('Failed to fetch week stats:', err));
+    getFavorites()
+      .then(setFavorites)
+      .catch((err) => console.error('Failed to fetch favorites:', err));
   }, [authUser]);
 
   async function handleStepsSave(count) {
@@ -229,9 +236,29 @@ export default function App() {
       const saved = await saveMeal(scanResult);
       setScannedMeals((prev) => [saved, ...prev]);
       refreshStats();
+      getFavorites().then(setFavorites).catch(() => {});
     } catch (err) {
       console.error('Failed to save meal:', err);
       setScannedMeals((prev) => [scanResult, ...prev]);
+    }
+  }
+
+  async function handleQuickLog(scanResult) {
+    try {
+      const saved = await saveMeal(scanResult);
+      setScannedMeals((prev) => [saved, ...prev]);
+      refreshStats();
+    } catch (err) {
+      console.error('Failed to quick-log:', err);
+    }
+  }
+
+  async function handleRemoveFavorite(id) {
+    try {
+      await removeFavorite(id);
+      setFavorites((prev) => prev.filter((f) => f.id !== id));
+    } catch (err) {
+      console.error('Failed to remove favorite:', err);
     }
   }
 
@@ -409,6 +436,12 @@ export default function App() {
             format={(n) => `${n}%`}
           />
         </header>
+
+        <QuickLogStrip
+          favorites={favorites}
+          onQuickLog={handleQuickLog}
+          onRemoveFavorite={handleRemoveFavorite}
+        />
 
         {/* Scan CTA */}
         <button

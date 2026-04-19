@@ -110,6 +110,28 @@ export async function getWeekStats() {
   return r.json();
 }
 
+export async function getFavorites() {
+  const r = await fetch(`${BASE}/favorites`, fetchOpts);
+  if (!r.ok) throw new Error(`${r.status}`);
+  return r.json();
+}
+
+export async function addFavorite(food) {
+  const r = await fetch(`${BASE}/favorites`, {
+    ...fetchOpts,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(food),
+  });
+  if (!r.ok) throw new Error(`${r.status}`);
+  return r.json();
+}
+
+export async function removeFavorite(id) {
+  const r = await fetch(`${BASE}/favorites/${id}`, { ...fetchOpts, method: 'DELETE' });
+  if (!r.ok && r.status !== 404) throw new Error(`${r.status}`);
+}
+
 function formatMealMeta(meal) {
   const d = meal.createdAt ? new Date(meal.createdAt) : null;
   if (!d || isNaN(d.getTime())) return meal.servingSize || '';

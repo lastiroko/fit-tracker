@@ -292,6 +292,31 @@
   text-align: center;
 }
 
+.favorite-toggle {
+  padding: 10px 14px;
+  background: #fff;
+  color: var(--ink);
+  border: var(--border-w) solid var(--ink);
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.favorite-toggle:active {
+  transform: translate(1px, 1px);
+}
+
+.favorite-toggle.saved {
+  background: var(--butter);
+  cursor: default;
+}
+
+.favorite-toggle:disabled {
+  opacity: 0.7;
+}
+
 /* ───────── Result actions ───────── */
 .result-actions {
   display: flex;

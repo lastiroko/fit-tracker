@@ -537,6 +537,84 @@
   font-size: 16px;
 }
 
+/* ───────── Quick log strip ───────── */
+.quicklog {
+  padding-top: 20px;
+  padding-bottom: 0;
+}
+
+.quicklog-strip {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 4px 0 12px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.quicklog-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.quicklog-tile {
+  position: relative;
+  flex: 0 0 108px;
+  min-height: 96px;
+  padding: 12px 14px 14px;
+  background: var(--tile-bg, var(--butter));
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  scroll-snap-align: start;
+}
+
+.quicklog-tile:active {
+  transform: translate(1px, 1px);
+  box-shadow: none;
+}
+
+.quicklog-kcal {
+  font-family: var(--font-display);
+  font-size: 22px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.quicklog-name {
+  margin-top: 8px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+
+.quicklog-remove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1.5px solid var(--ink);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 11px;
+  line-height: 1;
+  color: var(--ink);
+  cursor: pointer;
+}
+
 .meal-row {
   display: flex;
   align-items: center;
