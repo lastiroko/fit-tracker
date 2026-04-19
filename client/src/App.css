@@ -622,6 +622,195 @@
   gap: 14px;
 }
 
+.plan-week-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.plan-summary-tile {
+  background: #fff;
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  box-shadow: var(--shadow-sm);
+}
+
+.plan-summary-tile.over {
+  background: var(--coral);
+}
+
+.plan-summary-value {
+  font-family: var(--font-display);
+  font-size: 22px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-top: 6px;
+}
+
+.plan-shopping-btn {
+  grid-column: span 2;
+  padding: 14px;
+  background: var(--ink);
+  color: var(--butter);
+  border: var(--border-w) solid var(--ink);
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+}
+
+.plan-shopping-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: none;
+}
+
+/* ───────── Shopping list ───────── */
+.shopping-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.shopping-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1.5px solid var(--ink);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.shopping-row input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--ink);
+}
+
+.shopping-row.checked .shopping-name,
+.shopping-row.checked .shopping-qty {
+  text-decoration: line-through;
+  opacity: 0.45;
+}
+
+.shopping-name {
+  flex: 1;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.shopping-qty {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+/* ───────── Reminders card (in You view) ───────── */
+.reminders-card {
+  background: var(--sky);
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: var(--shadow-md);
+}
+
+.reminders-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.reminders-cycles {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.reminders-times {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.reminders-time-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.reminders-time-row input[type="time"] {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1.5px solid var(--ink);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 14px;
+  background: #fff;
+}
+
+.reminders-time-row .meal-delete {
+  margin: 0;
+}
+
+/* Toggle switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 52px;
+  height: 30px;
+  flex-shrink: 0;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch-slider {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  border: var(--border-w) solid var(--ink);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.switch-slider::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  width: 22px;
+  height: 22px;
+  background: var(--ink);
+  border-radius: 50%;
+  transition: transform 0.15s;
+}
+
+.switch input:checked + .switch-slider {
+  background: var(--butter);
+}
+
+.switch input:checked + .switch-slider::before {
+  transform: translateX(22px);
+}
+
 .plan-loading {
   padding: 24px 0;
   text-align: center;

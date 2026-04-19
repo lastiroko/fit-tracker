@@ -1,4 +1,4 @@
-const CACHE = 'fittracker-v1';
+const CACHE = 'fittracker-v2';
 const PRECACHE = ['/', '/icon.svg', '/manifest.webmanifest', '/pixel-portrait.png'];
 
 self.addEventListener('install', (e) => {
@@ -20,8 +20,13 @@ self.addEventListener('fetch', (e) => {
   if (request.method !== 'GET') return;
 
   const url = new URL(request.url);
-  // Never cache API calls — always hit the network.
-  if (url.pathname.startsWith('/api/')) return;
+  // Never cache API / auth / push endpoints — always hit the network.
+  if (
+    url.pathname.startsWith('/api/') ||
+    url.pathname.startsWith('/oauth2/') ||
+    url.pathname.startsWith('/login/') ||
+    url.pathname === '/logout'
+  ) return;
 
   e.respondWith(
     fetch(request)
@@ -31,5 +36,39 @@ self.addEventListener('fetch', (e) => {
         return res;
       })
       .catch(() => caches.match(request).then((cached) => cached || caches.match('/'))),
+  );
+});
+
+// ─── Push notifications (meal reminders) ────────────────────────────
+self.addEventListener('push', (event) => {
+  let data = { title: 'Fit Tracker', body: '', url: '/' };
+  try {
+    if (event.data) data = Object.assign(data, event.data.json());
+  } catch {
+    if (event.data) data.body = event.data.text();
+  }
+
+  const opts = {
+    body: data.body,
+    icon: '/icon.svg',
+    badge: '/icon.svg',
+    tag: 'meal-reminder',
+    renotify: true,
+    data: { url: data.url || '/' },
+  };
+
+  event.waitUntil(self.registration.showNotification(data.title || 'Fit Tracker', opts));
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const url = event.notification.data?.url || '/';
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((winList) => {
+      for (const w of winList) {
+        if ('focus' in w) return w.focus();
+      }
+      if (clients.openWindow) return clients.openWindow(url);
+    }),
   );
 });

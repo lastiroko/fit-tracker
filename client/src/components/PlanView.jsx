@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import MealPickerModal from './MealPickerModal';
+import ShoppingListModal from './ShoppingListModal';
 import { addPlannedMeal, getPlannedMeals, removePlannedMeal } from '../api';
+import { weekCost } from '../mealLibrary';
 
 const SLOTS = ['breakfast', 'lunch', 'dinner', 'snack'];
 
@@ -21,11 +23,12 @@ function nextDays(count) {
   return out;
 }
 
-export default function PlanView({ calorieGoal }) {
+export default function PlanView({ calorieGoal, weeklyBudget }) {
   const { t } = useTranslation();
   const [plans, setPlans] = useState([]);
   const [picker, setPicker] = useState(null); // { date, slot }
   const [loading, setLoading] = useState(true);
+  const [shoppingOpen, setShoppingOpen] = useState(false);
 
   const days = useMemo(() => nextDays(7), []);
   const startIso = isoDate(days[0]);
@@ -89,6 +92,10 @@ export default function PlanView({ calorieGoal }) {
     [],
   );
 
+  const weekKcal = plans.reduce((a, p) => a + (p.calories || 0), 0);
+  const weekCostUsd = weekCost(plans);
+  const overBudget = weeklyBudget && weekCostUsd > weeklyBudget;
+
   return (
     <>
       <header className="view-header">
@@ -97,6 +104,30 @@ export default function PlanView({ calorieGoal }) {
       </header>
 
       <section className="section plan-section">
+        <div className="plan-week-summary">
+          <div className="plan-summary-tile">
+            <div className="eyebrow">{t('planWeekKcal')}</div>
+            <div className="plan-summary-value">{weekKcal.toLocaleString()}</div>
+            <div className="kcal-label">
+              {calorieGoal ? `of ${(calorieGoal * 7).toLocaleString()}` : 'kcal'}
+            </div>
+          </div>
+          <div className={`plan-summary-tile${overBudget ? ' over' : ''}`}>
+            <div className="eyebrow">{t('planWeekCost')}</div>
+            <div className="plan-summary-value">${weekCostUsd.toFixed(2)}</div>
+            <div className="kcal-label">
+              {weeklyBudget ? `of $${weeklyBudget.toFixed(0)}` : 'USD'}
+            </div>
+          </div>
+          <button
+            type="button"
+            className="plan-shopping-btn"
+            onClick={() => setShoppingOpen(true)}
+          >
+            {t('planShoppingBtn')} →
+          </button>
+        </div>
+
         {loading && plans.length === 0 && (
           <div className="plan-loading">{t('loading')}</div>
         )}
@@ -160,6 +191,12 @@ export default function PlanView({ calorieGoal }) {
         defaultCategory={picker?.slot || 'breakfast'}
         onPick={handlePick}
         onClose={() => setPicker(null)}
+      />
+
+      <ShoppingListModal
+        open={shoppingOpen}
+        plannedMeals={plans}
+        onClose={() => setShoppingOpen(false)}
       />
     </>
   );

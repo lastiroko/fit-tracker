@@ -154,6 +154,49 @@ export async function removePlannedMeal(id) {
   if (!r.ok && r.status !== 404) throw new Error(`${r.status}`);
 }
 
+// ─── Preferences (meal reminders) ──────────────────────────────────
+export async function getPreferences() {
+  const r = await fetch(`${BASE}/preferences`, fetchOpts);
+  if (!r.ok) throw new Error(`${r.status}`);
+  return r.json();
+}
+
+export async function updatePreferences(prefs) {
+  const r = await fetch(`${BASE}/preferences`, {
+    ...fetchOpts,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(prefs),
+  });
+  if (!r.ok) throw new Error(`${r.status}`);
+  return r.json();
+}
+
+// ─── Web Push subscription ─────────────────────────────────────────
+export async function getVapidPublicKey() {
+  const r = await fetch(`${BASE}/push/vapid-public-key`, fetchOpts);
+  if (!r.ok) throw new Error(`${r.status}`);
+  return r.json();
+}
+
+export async function postPushSubscription(subscription) {
+  const r = await fetch(`${BASE}/push/subscribe`, {
+    ...fetchOpts,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(subscription),
+  });
+  if (!r.ok) throw new Error(`${r.status}`);
+}
+
+export async function deletePushSubscription(endpoint) {
+  const r = await fetch(
+    `${BASE}/push/subscribe?endpoint=${encodeURIComponent(endpoint)}`,
+    { ...fetchOpts, method: 'DELETE' },
+  );
+  if (!r.ok && r.status !== 404) throw new Error(`${r.status}`);
+}
+
 function formatMealMeta(meal) {
   const d = meal.createdAt ? new Date(meal.createdAt) : null;
   if (!d || isNaN(d.getTime())) return meal.servingSize || '';

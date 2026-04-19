@@ -6,12 +6,14 @@ export default function SettingsModal({ open, settings, onSave, onClose }) {
   const [name, setName] = useState(settings.name);
   const [calorieGoal, setCalorieGoal] = useState(settings.calorieGoal);
   const [stepGoal, setStepGoal] = useState(settings.stepGoal);
+  const [weeklyBudget, setWeeklyBudget] = useState(settings.weeklyBudget);
 
   useEffect(() => {
     if (open) {
       setName(settings.name);
       setCalorieGoal(settings.calorieGoal);
       setStepGoal(settings.stepGoal);
+      setWeeklyBudget(settings.weeklyBudget);
     }
   }, [open, settings]);
 
@@ -23,6 +25,7 @@ export default function SettingsModal({ open, settings, onSave, onClose }) {
       name: name.trim() || 'You',
       calorieGoal: Math.max(200, Math.min(10000, Number(calorieGoal) || 1500)),
       stepGoal: Math.max(500, Math.min(100000, Number(stepGoal) || 10000)),
+      weeklyBudget: Math.max(0, Math.min(10000, Number(weeklyBudget) || 0)),
     });
   }
 
@@ -74,6 +77,19 @@ export default function SettingsModal({ open, settings, onSave, onClose }) {
             min={500}
             max={100000}
             step={500}
+          />
+        </label>
+
+        <label className="settings-field">
+          <span className="eyebrow">{t('settingsWeeklyBudget')}</span>
+          <input
+            type="number"
+            inputMode="decimal"
+            value={weeklyBudget}
+            onChange={(e) => setWeeklyBudget(e.target.value)}
+            min={0}
+            max={10000}
+            step={5}
           />
         </label>
 

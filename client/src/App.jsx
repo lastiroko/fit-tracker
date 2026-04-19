@@ -8,6 +8,7 @@ import StepEditorModal from './components/StepEditorModal';
 import WeekChart from './components/WeekChart';
 import QuickLogStrip from './components/QuickLogStrip';
 import PlanView from './components/PlanView';
+import RemindersCard from './components/RemindersCard';
 import ScannerModal from './components/scanner/ScannerModal';
 import {
   getTodaySteps,
@@ -29,7 +30,7 @@ import './App.css';
 
 const INK = '#1a1a1a';
 
-const DEFAULT_SETTINGS = { name: 'You', calorieGoal: 1500, stepGoal: 10000 };
+const DEFAULT_SETTINGS = { name: 'You', calorieGoal: 1500, stepGoal: 10000, weeklyBudget: 80 };
 
 function loadSettings() {
   try {
@@ -40,6 +41,7 @@ function loadSettings() {
       name: typeof parsed.name === 'string' && parsed.name ? parsed.name : DEFAULT_SETTINGS.name,
       calorieGoal: Number(parsed.calorieGoal) || DEFAULT_SETTINGS.calorieGoal,
       stepGoal: Number(parsed.stepGoal) || DEFAULT_SETTINGS.stepGoal,
+      weeklyBudget: Number(parsed.weeklyBudget) || DEFAULT_SETTINGS.weeklyBudget,
     };
   } catch {
     return DEFAULT_SETTINGS;
@@ -536,7 +538,10 @@ export default function App() {
         )}
 
         {view === 'plan' && (
-          <PlanView calorieGoal={settings.calorieGoal} />
+          <PlanView
+            calorieGoal={settings.calorieGoal}
+            weeklyBudget={settings.weeklyBudget}
+          />
         )}
 
         {view === 'meals' && (
@@ -633,6 +638,8 @@ export default function App() {
                 <div className="eyebrow">{t('language')}</div>
                 <LanguageSwitcher />
               </div>
+
+              <RemindersCard />
 
               <button
                 type="button"
