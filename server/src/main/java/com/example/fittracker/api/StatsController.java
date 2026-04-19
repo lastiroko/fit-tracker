@@ -3,10 +3,9 @@ package com.example.fittracker.api;
 import com.example.fittracker.api.dto.DailyStats;
 import com.example.fittracker.model.Meal;
 import com.example.fittracker.repository.MealRepository;
+import com.example.fittracker.util.DayRange;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -22,13 +21,11 @@ public class StatsController {
     }
 
     @GetMapping("/today")
-    public DailyStats getTodayStats() {
-        LocalDateTime start = LocalDate.now().atStartOfDay();
-        LocalDateTime end = start.plusDays(1);
-        List<Meal> meals = mealRepo.findByCreatedAtBetweenOrderByCreatedAtDesc(start, end);
+    public DailyStats getTodayStats(@RequestParam(value = "tz", required = false) String tz) {
+        DayRange range = DayRange.todayIn(tz);
+        List<Meal> meals = mealRepo.findByCreatedAtBetweenOrderByCreatedAtDesc(range.startUtc(), range.endUtc());
 
         int calories = meals.stream().mapToInt(Meal::getCalories).sum();
-
         int nutrientScore = weightedAvg(meals, Meal::getNutrientScore);
         int pollutantScore = weightedAvg(meals, Meal::getPollutantScore);
 

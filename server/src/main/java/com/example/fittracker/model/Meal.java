@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 @Entity
 @Table(name = "meals")
@@ -63,7 +64,8 @@ public class Meal {
         this.novaGroup = result.novaGroup();
         this.nutrientScore = nutrientScore;
         this.pollutantScore = pollutantScore;
-        this.createdAt = LocalDateTime.now();
+        // Always anchor timestamps to UTC, independent of the VM's wall clock.
+        this.createdAt = LocalDateTime.now(ZoneOffset.UTC);
     }
 
     public Long getId() { return id; }

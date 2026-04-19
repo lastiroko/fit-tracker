@@ -1,5 +1,13 @@
 const BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8080/api';
 
+function clientTimezone() {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+  } catch {
+    return 'UTC';
+  }
+}
+
 export async function getTodaySteps() {
   const r = await fetch(`${BASE}/steps/today`);
   if (!r.ok) throw new Error(`${r.status}`);
@@ -37,13 +45,13 @@ export async function saveMeal(meal) {
 }
 
 export async function getTodayMeals() {
-  const r = await fetch(`${BASE}/meals/today`);
+  const r = await fetch(`${BASE}/meals/today?tz=${encodeURIComponent(clientTimezone())}`);
   if (!r.ok) throw new Error(`${r.status}`);
   return r.json();
 }
 
 export async function getTodayStats() {
-  const r = await fetch(`${BASE}/stats/today`);
+  const r = await fetch(`${BASE}/stats/today?tz=${encodeURIComponent(clientTimezone())}`);
   if (!r.ok) throw new Error(`${r.status}`);
   return r.json();
 }

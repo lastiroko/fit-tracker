@@ -6,10 +6,9 @@ import com.example.fittracker.model.Meal;
 import com.example.fittracker.repository.MealRepository;
 import com.example.fittracker.service.NutritionScoringService;
 import com.example.fittracker.service.NutritionScoringService.Scores;
+import com.example.fittracker.util.DayRange;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -32,10 +31,9 @@ public class MealController {
     }
 
     @GetMapping("/today")
-    public List<MealEntry> getTodayMeals() {
-        LocalDateTime start = LocalDate.now().atStartOfDay();
-        LocalDateTime end = start.plusDays(1);
-        return repo.findByCreatedAtBetweenOrderByCreatedAtDesc(start, end)
+    public List<MealEntry> getTodayMeals(@RequestParam(value = "tz", required = false) String tz) {
+        DayRange range = DayRange.todayIn(tz);
+        return repo.findByCreatedAtBetweenOrderByCreatedAtDesc(range.startUtc(), range.endUtc())
             .stream()
             .map(MealEntry::fromEntity)
             .toList();
