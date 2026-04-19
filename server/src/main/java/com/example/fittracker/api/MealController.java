@@ -40,6 +40,20 @@ public class MealController {
             .toList();
     }
 
+    @GetMapping
+    public List<MealEntry> getRecentMeals(
+        @RequestParam(value = "days", required = false, defaultValue = "30") int days
+    ) {
+        int safeDays = Math.max(1, Math.min(365, days));
+        java.time.LocalDateTime after = java.time.LocalDateTime
+            .now(java.time.ZoneOffset.UTC)
+            .minusDays(safeDays);
+        return repo.findTop200ByCreatedAtAfterOrderByCreatedAtDesc(after)
+            .stream()
+            .map(MealEntry::fromEntity)
+            .toList();
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteMeal(@PathVariable Long id) {
         if (!repo.existsById(id)) {

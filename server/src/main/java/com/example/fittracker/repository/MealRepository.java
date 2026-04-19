@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface MealRepository extends JpaRepository<Meal, Long> {
     List<Meal> findByCreatedAtBetweenOrderByCreatedAtDesc(LocalDateTime start, LocalDateTime end);
+
+    List<Meal> findTop200ByCreatedAtAfterOrderByCreatedAtDesc(LocalDateTime after);
 }
