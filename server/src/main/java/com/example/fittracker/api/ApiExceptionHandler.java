@@ -2,45 +2,36 @@ package com.example.fittracker.api;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.ErrorResponseException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.Map;
 
+/**
+ * Extends ResponseEntityExceptionHandler so Spring's built-in handlers keep mapping MVC
+ * exceptions (NoResourceFoundException → 404, malformed JSON → 400, etc.) to their proper
+ * HTTP status codes. We only add a narrow handler for IllegalArgumentException and a
+ * last-resort handler for truly unexpected RuntimeExceptions.
+ */
 @ControllerAdvice
-public class ApiExceptionHandler {
+public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(ApiExceptionHandler.class);
 
-    @ExceptionHandler({
-        HttpMessageNotReadableException.class,
-        IllegalArgumentException.class,
-        MethodArgumentTypeMismatchException.class,
-        MethodArgumentNotValidException.class,
-    })
-    public ResponseEntity<Map<String, String>> badRequest(Exception e) {
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>> badArgs(IllegalArgumentException e) {
         return ResponseEntity
-            .status(HttpStatus.BAD_REQUEST)
+            .badRequest()
             .body(Map.of("error", "bad_request", "message", String.valueOf(e.getMessage())));
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, String>> serverError(Exception e) throws Exception {
-        // Let Spring's own ErrorResponseException / ResponseStatusException flow through
-        // with their intended status codes (e.g. NoResourceFoundException → 404).
-        if (e instanceof ErrorResponseException || e instanceof ResponseStatusException) {
-            throw e;
-        }
-        log.error("Unhandled server error", e);
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Map<String, String>> unhandled(RuntimeException e) {
+        log.error("Unhandled runtime error", e);
         return ResponseEntity
-            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .internalServerError()
             .body(Map.of("error", "internal_error"));
     }
 }
