@@ -334,10 +334,7 @@ export default function App() {
         {/* Header block */}
         <header className="header-block">
           <div className="nav-row">
-            <span className="nav-pill active">{t('navHome')}</span>
-            <span className="nav-pill">{t('navMeals')}</span>
-            <span className="nav-pill">{t('navMoves')}</span>
-            <span className="nav-pill">{t('navPlan')}</span>
+            <div className="eyebrow">{t('appName')}</div>
             <span className="spacer" />
             <LanguageSwitcher />
           </div>
