@@ -5,7 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
-public interface StepLogRepository extends JpaRepository<StepLog, LocalDate> {
-    List<StepLog> findByDateBetweenOrderByDateAsc(LocalDate start, LocalDate end);
+public interface StepLogRepository extends JpaRepository<StepLog, Long> {
+
+    Optional<StepLog> findByOwnerEmailAndDate(String ownerEmail, LocalDate date);
+
+    List<StepLog> findByOwnerEmailAndDateBetweenOrderByDateAsc(String ownerEmail, LocalDate start, LocalDate end);
 }

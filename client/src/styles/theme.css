@@ -76,6 +76,27 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   position: relative;
+  /* Native-feel scrolling + prevent iOS rubber-band exposing body bg */
+  overscroll-behavior-y: contain;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Disable the dotted paper texture on small screens — looks busy on phones */
+@media (max-width: 480px) {
+  body::before {
+    display: none;
+  }
+}
+
+/* Minimum tap target size on touch devices */
+@media (hover: none) {
+  button,
+  .nav-pill,
+  .tab,
+  .meal-delete,
+  .close-btn {
+    min-height: 36px;
+  }
 }
 
 body::before {

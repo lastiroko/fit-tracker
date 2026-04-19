@@ -4,7 +4,10 @@ import com.example.fittracker.api.dto.DailyStats;
 import com.example.fittracker.api.dto.DayStat;
 import com.example.fittracker.model.Meal;
 import com.example.fittracker.repository.MealRepository;
+import com.example.fittracker.util.CurrentUser;
 import com.example.fittracker.util.DayRange;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -29,25 +32,28 @@ public class StatsController {
     }
 
     @GetMapping("/today")
-    public DailyStats getTodayStats(@RequestParam(value = "tz", required = false) String tz) {
+    public DailyStats getTodayStats(
+        @RequestParam(value = "tz", required = false) String tz,
+        @AuthenticationPrincipal OAuth2User principal
+    ) {
+        String email = CurrentUser.emailOrThrow(principal);
         DayRange range = DayRange.todayIn(tz);
-        List<Meal> meals = mealRepo.findByCreatedAtBetweenOrderByCreatedAtDesc(range.startUtc(), range.endUtc());
+        List<Meal> meals = mealRepo
+            .findByOwnerEmailAndCreatedAtBetweenOrderByCreatedAtDesc(email, range.startUtc(), range.endUtc());
 
         int calories = meals.stream().mapToInt(Meal::getCalories).sum();
         int nutrientScore = weightedAvg(meals, Meal::getNutrientScore);
         int pollutantScore = weightedAvg(meals, Meal::getPollutantScore);
 
-        return new DailyStats(
-            nutrientScore,
-            pollutantScore,
-            calories,
-            DEFAULT_CALORIE_GOAL,
-            meals.size()
-        );
+        return new DailyStats(nutrientScore, pollutantScore, calories, DEFAULT_CALORIE_GOAL, meals.size());
     }
 
     @GetMapping("/week")
-    public List<DayStat> getWeekStats(@RequestParam(value = "tz", required = false) String tz) {
+    public List<DayStat> getWeekStats(
+        @RequestParam(value = "tz", required = false) String tz,
+        @AuthenticationPrincipal OAuth2User principal
+    ) {
+        String email = CurrentUser.emailOrThrow(principal);
         ZoneId zone = DayRange.parseZone(tz);
         LocalDate today = LocalDate.now(zone);
         LocalDate start = today.minusDays(6);
@@ -55,9 +61,9 @@ public class StatsController {
         LocalDateTime startUtc = start.atStartOfDay(zone).withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
         LocalDateTime endUtc = today.plusDays(1).atStartOfDay(zone).withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
 
-        List<Meal> meals = mealRepo.findByCreatedAtBetweenOrderByCreatedAtDesc(startUtc, endUtc);
+        List<Meal> meals = mealRepo
+            .findByOwnerEmailAndCreatedAtBetweenOrderByCreatedAtDesc(email, startUtc, endUtc);
 
-        // Group meals by their local date (in caller's TZ) — each meal.createdAt is stored as UTC.
         Map<LocalDate, List<Meal>> byDate = new HashMap<>();
         for (Meal m : meals) {
             LocalDate localDate = m.getCreatedAt()

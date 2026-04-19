@@ -34,6 +34,9 @@ public class Meal {
 
     private String source;
 
+    @Column(name = "owner_email", length = 254)
+    private String ownerEmail;
+
     @Column(name = "nutri_score", length = 1)
     private String nutriScore;
 
@@ -51,7 +54,7 @@ public class Meal {
 
     protected Meal() {}
 
-    public Meal(FoodScanResult result, int nutrientScore, int pollutantScore) {
+    public Meal(FoodScanResult result, int nutrientScore, int pollutantScore, String ownerEmail) {
         this.name = result.name();
         this.brand = result.brand();
         this.calories = result.calories();
@@ -60,6 +63,7 @@ public class Meal {
         this.fat = result.fat();
         this.servingSize = result.servingSize();
         this.source = result.source();
+        this.ownerEmail = ownerEmail;
         this.nutriScore = result.nutriScore();
         this.novaGroup = result.novaGroup();
         this.nutrientScore = nutrientScore;
@@ -77,6 +81,7 @@ public class Meal {
     public double getFat() { return fat; }
     public String getServingSize() { return servingSize; }
     public String getSource() { return source; }
+    public String getOwnerEmail() { return ownerEmail; }
     public String getNutriScore() { return nutriScore; }
     public Integer getNovaGroup() { return novaGroup; }
     public Integer getNutrientScore() { return nutrientScore; }

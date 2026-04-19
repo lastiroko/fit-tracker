@@ -7,7 +7,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface MealRepository extends JpaRepository<Meal, Long> {
-    List<Meal> findByCreatedAtBetweenOrderByCreatedAtDesc(LocalDateTime start, LocalDateTime end);
+    List<Meal> findByOwnerEmailAndCreatedAtBetweenOrderByCreatedAtDesc(
+        String ownerEmail, LocalDateTime start, LocalDateTime end);
 
-    List<Meal> findTop200ByCreatedAtAfterOrderByCreatedAtDesc(LocalDateTime after);
+    List<Meal> findTop200ByOwnerEmailAndCreatedAtAfterOrderByCreatedAtDesc(
+        String ownerEmail, LocalDateTime after);
 }
