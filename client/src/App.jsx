@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './components/LanguageSwitcher';
+import LoginScreen from './components/LoginScreen';
 import StepRing from './components/StepRing';
 import SettingsModal from './components/SettingsModal';
 import StepEditorModal from './components/StepEditorModal';
@@ -16,6 +17,8 @@ import {
   setTodaySteps,
   getWeekSteps,
   getRecentMeals,
+  getCurrentUser,
+  logout,
   formatMealMeta,
 } from './api';
 import './App.css';
@@ -148,6 +151,16 @@ export default function App() {
   const [scannerOpen, setScannerOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [stepEditorOpen, setStepEditorOpen] = useState(false);
+  const [authUser, setAuthUser] = useState(undefined); // undefined = loading, null = signed out
+  const [authDenied, setAuthDenied] = useState(
+    typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('auth') === 'denied',
+  );
+
+  useEffect(() => {
+    getCurrentUser()
+      .then((u) => setAuthUser(u))
+      .catch(() => setAuthUser(null));
+  }, []);
   const [scannedMeals, setScannedMeals] = useState([]);
   const [dailyStats, setDailyStats] = useState({
     nutrientScore: 0,
@@ -165,6 +178,7 @@ export default function App() {
   }, [settings]);
 
   useEffect(() => {
+    if (!authUser) return;
     getTodaySteps()
       .then(setStepData)
       .catch((err) => console.error('Failed to fetch steps:', err));
@@ -180,7 +194,7 @@ export default function App() {
     getWeekStats()
       .then(setWeekStats)
       .catch((err) => console.error('Failed to fetch week stats:', err));
-  }, []);
+  }, [authUser]);
 
   async function handleStepsSave(count) {
     try {
@@ -324,6 +338,14 @@ export default function App() {
       return;
     }
     setView(key);
+  }
+
+  if (authUser === undefined) {
+    return <div className="app-page" aria-busy="true" />;
+  }
+
+  if (authUser === null) {
+    return <LoginScreen denied={authDenied} />;
   }
 
   return (
@@ -579,6 +601,18 @@ export default function App() {
                 onClick={() => setSettingsOpen(true)}
               >
                 {t('settingsTitle')} →
+              </button>
+
+              <button
+                type="button"
+                className="you-edit-btn"
+                style={{ background: '#fff', color: 'var(--ink)', boxShadow: 'none' }}
+                onClick={async () => {
+                  await logout();
+                  setAuthUser(null);
+                }}
+              >
+                {t('signOut')}
               </button>
             </section>
           </>

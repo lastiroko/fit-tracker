@@ -1,4 +1,8 @@
-const BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8080/api';
+// In production Vercel rewrites /api/* → Fly, so relative paths are same-origin
+// and session cookies flow without CORS gymnastics. In local dev point at Spring Boot.
+const BASE = import.meta.env.VITE_API_BASE || '/api';
+
+const fetchOpts = { credentials: 'same-origin' };
 
 function clientTimezone() {
   try {
@@ -8,14 +12,26 @@ function clientTimezone() {
   }
 }
 
+export async function getCurrentUser() {
+  const r = await fetch(`${BASE}/auth/me`, fetchOpts);
+  if (r.status === 401) return null;
+  if (!r.ok) throw new Error(`${r.status}`);
+  return r.json();
+}
+
+export async function logout() {
+  await fetch('/logout', { method: 'POST', ...fetchOpts });
+}
+
 export async function getTodaySteps() {
-  const r = await fetch(`${BASE}/steps/today?tz=${encodeURIComponent(clientTimezone())}`);
+  const r = await fetch(`${BASE}/steps/today?tz=${encodeURIComponent(clientTimezone())}`, fetchOpts);
   if (!r.ok) throw new Error(`${r.status}`);
   return r.json();
 }
 
 export async function setTodaySteps(count) {
   const r = await fetch(`${BASE}/steps/today?tz=${encodeURIComponent(clientTimezone())}`, {
+    ...fetchOpts,
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ count }),
@@ -25,13 +41,14 @@ export async function setTodaySteps(count) {
 }
 
 export async function getWeekSteps() {
-  const r = await fetch(`${BASE}/steps/week?tz=${encodeURIComponent(clientTimezone())}`);
+  const r = await fetch(`${BASE}/steps/week?tz=${encodeURIComponent(clientTimezone())}`, fetchOpts);
   if (!r.ok) throw new Error(`${r.status}`);
   return r.json();
 }
 
 export async function scanBarcode(barcode) {
   const r = await fetch(`${BASE}/scan/barcode`, {
+    ...fetchOpts,
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ barcode }),
@@ -42,6 +59,7 @@ export async function scanBarcode(barcode) {
 
 export async function scanPhoto(imageData) {
   const r = await fetch(`${BASE}/scan/photo`, {
+    ...fetchOpts,
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ image: imageData }),
@@ -52,6 +70,7 @@ export async function scanPhoto(imageData) {
 
 export async function saveMeal(meal) {
   const r = await fetch(`${BASE}/meals`, {
+    ...fetchOpts,
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(meal),
@@ -61,30 +80,30 @@ export async function saveMeal(meal) {
 }
 
 export async function deleteMeal(id) {
-  const r = await fetch(`${BASE}/meals/${id}`, { method: 'DELETE' });
+  const r = await fetch(`${BASE}/meals/${id}`, { ...fetchOpts, method: 'DELETE' });
   if (!r.ok && r.status !== 404) throw new Error(`${r.status}`);
 }
 
 export async function getTodayMeals() {
-  const r = await fetch(`${BASE}/meals/today?tz=${encodeURIComponent(clientTimezone())}`);
+  const r = await fetch(`${BASE}/meals/today?tz=${encodeURIComponent(clientTimezone())}`, fetchOpts);
   if (!r.ok) throw new Error(`${r.status}`);
   return r.json();
 }
 
 export async function getRecentMeals(days = 30) {
-  const r = await fetch(`${BASE}/meals?days=${days}`);
+  const r = await fetch(`${BASE}/meals?days=${days}`, fetchOpts);
   if (!r.ok) throw new Error(`${r.status}`);
   return r.json();
 }
 
 export async function getTodayStats() {
-  const r = await fetch(`${BASE}/stats/today?tz=${encodeURIComponent(clientTimezone())}`);
+  const r = await fetch(`${BASE}/stats/today?tz=${encodeURIComponent(clientTimezone())}`, fetchOpts);
   if (!r.ok) throw new Error(`${r.status}`);
   return r.json();
 }
 
 export async function getWeekStats() {
-  const r = await fetch(`${BASE}/stats/week?tz=${encodeURIComponent(clientTimezone())}`);
+  const r = await fetch(`${BASE}/stats/week?tz=${encodeURIComponent(clientTimezone())}`, fetchOpts);
   if (!r.ok) throw new Error(`${r.status}`);
   return r.json();
 }

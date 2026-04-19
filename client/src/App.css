@@ -805,6 +805,96 @@
   cursor: pointer;
 }
 
+/* ───────── Login screen ───────── */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 360px;
+  background: var(--paper);
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+}
+
+.login-badge {
+  width: 64px;
+  height: 64px;
+  background: var(--butter);
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 26px;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+}
+
+.login-title {
+  font-family: var(--font-display);
+  font-size: 32px;
+  letter-spacing: -0.03em;
+  margin-top: 4px;
+}
+
+.login-sub {
+  font-size: 14px;
+  opacity: 0.75;
+  line-height: 1.4;
+  max-width: 280px;
+}
+
+.login-error {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--coral);
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.login-google {
+  width: 100%;
+  margin-top: 6px;
+  padding: 12px 16px;
+  background: #fff;
+  color: var(--ink);
+  border: var(--border-w) solid var(--ink);
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 700;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.login-google:active {
+  transform: translate(1px, 1px);
+  box-shadow: none;
+}
+
 /* ───────── Settings modal ───────── */
 .settings-overlay {
   position: fixed;
