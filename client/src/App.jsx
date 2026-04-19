@@ -2,6 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import StepRing from './components/StepRing';
+import SettingsModal from './components/SettingsModal';
+import StepEditorModal from './components/StepEditorModal';
+import WeekChart from './components/WeekChart';
 import ScannerModal from './components/scanner/ScannerModal';
 import {
   getTodaySteps,
@@ -9,11 +12,30 @@ import {
   getTodayMeals,
   getTodayStats,
   deleteMeal,
+  setTodaySteps,
+  getWeekSteps,
   formatMealMeta,
 } from './api';
 import './App.css';
 
 const INK = '#1a1a1a';
+
+const DEFAULT_SETTINGS = { name: 'You', calorieGoal: 1500, stepGoal: 10000 };
+
+function loadSettings() {
+  try {
+    const raw = localStorage.getItem('fit-tracker:settings');
+    if (!raw) return DEFAULT_SETTINGS;
+    const parsed = JSON.parse(raw);
+    return {
+      name: typeof parsed.name === 'string' && parsed.name ? parsed.name : DEFAULT_SETTINGS.name,
+      calorieGoal: Number(parsed.calorieGoal) || DEFAULT_SETTINGS.calorieGoal,
+      stepGoal: Number(parsed.stepGoal) || DEFAULT_SETTINGS.stepGoal,
+    };
+  } catch {
+    return DEFAULT_SETTINGS;
+  }
+}
 
 const Glyph = {
   leaf: (
@@ -116,8 +138,11 @@ function MealRow({ title, meta, chips = [], kcal, onDelete }) {
 
 export default function App() {
   const { t } = useTranslation();
-  const [stepData, setStepData] = useState({ steps: 6916, goal: 10000 });
+  const [stepData, setStepData] = useState({ steps: 0, goal: 10000 });
+  const [weekSteps, setWeekSteps] = useState([]);
   const [scannerOpen, setScannerOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [stepEditorOpen, setStepEditorOpen] = useState(false);
   const [scannedMeals, setScannedMeals] = useState([]);
   const [dailyStats, setDailyStats] = useState({
     nutrientScore: 0,
@@ -126,11 +151,21 @@ export default function App() {
     calorieGoal: 1500,
     mealCount: 0,
   });
+  const [settings, setSettings] = useState(() => loadSettings());
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('fit-tracker:settings', JSON.stringify(settings));
+    } catch {}
+  }, [settings]);
 
   useEffect(() => {
     getTodaySteps()
       .then(setStepData)
       .catch((err) => console.error('Failed to fetch steps:', err));
+    getWeekSteps()
+      .then(setWeekSteps)
+      .catch((err) => console.error('Failed to fetch week steps:', err));
     getTodayMeals()
       .then(setScannedMeals)
       .catch((err) => console.error('Failed to fetch meals:', err));
@@ -138,6 +173,17 @@ export default function App() {
       .then(setDailyStats)
       .catch((err) => console.error('Failed to fetch stats:', err));
   }, []);
+
+  async function handleStepsSave(count) {
+    try {
+      const updated = await setTodaySteps(count);
+      setStepData(updated);
+      setStepEditorOpen(false);
+      getWeekSteps().then(setWeekSteps).catch(() => {});
+    } catch (err) {
+      console.error('Failed to save steps:', err);
+    }
+  }
 
   async function refreshStats() {
     try {
@@ -182,9 +228,9 @@ export default function App() {
 
   const stats = useMemo(() => {
     const empty = dailyStats.mealCount === 0;
-    const caloriesLeft = Math.max(0, dailyStats.calorieGoal - dailyStats.calories);
-    const movePct = Math.round((stepData.steps / stepData.goal) * 100);
-    const moveLeft = Math.max(0, stepData.goal - stepData.steps);
+    const caloriesLeft = Math.max(0, settings.calorieGoal - dailyStats.calories);
+    const movePct = Math.round((stepData.steps / settings.stepGoal) * 100);
+    const moveLeft = Math.max(0, settings.stepGoal - stepData.steps);
 
     return [
       {
@@ -228,7 +274,7 @@ export default function App() {
         chipColor: 'chip-orange',
       },
     ];
-  }, [t, dailyStats, stepData]);
+  }, [t, dailyStats, stepData, settings]);
 
   const tabs = [
     { key: 'home', label: t('tabHome'), active: true, color: 'butter' },
@@ -257,18 +303,31 @@ export default function App() {
               <h1 className="hero-title">
                 {t('greetingPrefix')}
                 <br />
-                {t('userName')}.
+                {settings.name}.
               </h1>
               <p className="hero-sub">{t('heroSub')}</p>
             </div>
-            <div className="pixel-portrait" aria-hidden="true">
+            <button
+              type="button"
+              className="pixel-portrait"
+              onClick={() => setSettingsOpen(true)}
+              aria-label={t('settingsTitle')}
+            >
               <img src="/pixel-portrait.png" alt="" />
-            </div>
+            </button>
           </div>
 
-          <div className="step-ring-card">
-            <StepRing value={stepData.steps} max={stepData.goal} />
-          </div>
+          <button
+            type="button"
+            className="step-ring-card step-ring-button"
+            onClick={() => setStepEditorOpen(true)}
+            aria-label={t('stepsEditTitle')}
+          >
+            <StepRing value={stepData.steps} max={settings.stepGoal} />
+            <span className="step-ring-edit">{t('stepsEditHint')}</span>
+          </button>
+
+          <WeekChart days={weekSteps} goal={settings.stepGoal} />
         </header>
 
         {/* Scan CTA */}
@@ -294,7 +353,9 @@ export default function App() {
             <h2 id="daily-stats" className="section-title">
               {t('dailyStats')}
             </h2>
-            <div className="eyebrow">{t('dailyStatsSubtitle')}</div>
+            <div className="eyebrow">
+              {t('dailyStatsGoal', { kcal: settings.calorieGoal.toLocaleString() })}
+            </div>
           </div>
           <div className="stat-grid">
             {stats.map((s) => (
@@ -376,6 +437,23 @@ export default function App() {
         open={scannerOpen}
         onClose={() => setScannerOpen(false)}
         onMealAdded={handleMealAdded}
+      />
+
+      <SettingsModal
+        open={settingsOpen}
+        settings={settings}
+        onSave={(next) => {
+          setSettings(next);
+          setSettingsOpen(false);
+        }}
+        onClose={() => setSettingsOpen(false)}
+      />
+
+      <StepEditorModal
+        open={stepEditorOpen}
+        initial={stepData.steps}
+        onSave={handleStepsSave}
+        onClose={() => setStepEditorOpen(false)}
       />
     </div>
   );

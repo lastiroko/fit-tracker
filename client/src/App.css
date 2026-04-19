@@ -126,6 +126,13 @@
   box-shadow: 3px 3px 0 var(--ink);
   flex-shrink: 0;
   background: var(--butter);
+  padding: 0;
+  cursor: pointer;
+}
+
+.pixel-portrait:active {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--ink);
 }
 
 .pixel-portrait img {
@@ -142,6 +149,111 @@
   border-radius: 18px;
   padding: 14px;
   box-shadow: var(--shadow-md);
+}
+
+.step-ring-button {
+  width: 100%;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  position: relative;
+}
+
+.step-ring-button:active {
+  transform: translate(1px, 1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.step-ring-edit {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  opacity: 0.55;
+}
+
+/* ───────── Weekly bar chart ───────── */
+.week-chart {
+  margin-top: 14px;
+  background: #fff;
+  border: var(--border-w) solid var(--ink);
+  border-radius: 18px;
+  padding: 14px;
+  box-shadow: var(--shadow-md);
+}
+
+.week-chart-eyebrow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+
+.week-chart-bars {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  align-items: end;
+}
+
+.week-chart-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.week-chart-track {
+  width: 100%;
+  height: 72px;
+  background: var(--cream);
+  border: 1.5px solid var(--ink);
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.week-chart-bar {
+  width: 70%;
+  background: var(--lavender);
+  border-top: 1.5px solid var(--ink);
+  border-bottom: 0;
+  transition: height 0.4s ease;
+}
+
+.week-chart-bar.today {
+  background: var(--coral);
+}
+
+.week-chart-goal {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0;
+  border-top: 1.5px dashed var(--ink);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.week-chart-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ink);
+  opacity: 0.7;
+  letter-spacing: 0.08em;
 }
 
 .step-ring-block {
@@ -570,4 +682,104 @@
   display: inline-flex;
   gap: 8px;
   align-items: center;
+}
+
+/* ───────── Settings modal ───────── */
+.settings-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  background: rgba(26, 26, 26, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+
+.settings-modal {
+  background: var(--paper);
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 360px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.settings-header h2 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: -0.02em;
+}
+
+.settings-close {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: transparent;
+  border: 1.5px solid var(--ink);
+  border-radius: 50%;
+  font-family: var(--font-display);
+  font-size: 18px;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.settings-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.settings-field input {
+  padding: 10px 12px;
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
+  background: #fff;
+  color: var(--ink);
+}
+
+.settings-field input:focus {
+  outline: none;
+  box-shadow: var(--shadow-sm);
+}
+
+.settings-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.settings-btn {
+  flex: 1;
+  padding: 12px 14px;
+  border: var(--border-w) solid var(--ink);
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+}
+
+.settings-btn.ghost {
+  background: #fff;
+  color: var(--ink);
+}
+
+.settings-btn.primary {
+  background: var(--ink);
+  color: var(--butter);
+  box-shadow: var(--shadow-sm);
 }

@@ -9,7 +9,23 @@ function clientTimezone() {
 }
 
 export async function getTodaySteps() {
-  const r = await fetch(`${BASE}/steps/today`);
+  const r = await fetch(`${BASE}/steps/today?tz=${encodeURIComponent(clientTimezone())}`);
+  if (!r.ok) throw new Error(`${r.status}`);
+  return r.json();
+}
+
+export async function setTodaySteps(count) {
+  const r = await fetch(`${BASE}/steps/today?tz=${encodeURIComponent(clientTimezone())}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ count }),
+  });
+  if (!r.ok) throw new Error(`${r.status}`);
+  return r.json();
+}
+
+export async function getWeekSteps() {
+  const r = await fetch(`${BASE}/steps/week?tz=${encodeURIComponent(clientTimezone())}`);
   if (!r.ok) throw new Error(`${r.status}`);
   return r.json();
 }

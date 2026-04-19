@@ -19,7 +19,11 @@ public record DayRange(LocalDateTime startUtc, LocalDateTime endUtc) {
         return new DayRange(startUtc, endUtc);
     }
 
-    private static ZoneId parseZone(String ianaTz) {
+    public static LocalDate todayDateIn(String ianaTz) {
+        return LocalDate.now(parseZone(ianaTz));
+    }
+
+    public static ZoneId parseZone(String ianaTz) {
         if (ianaTz == null || ianaTz.isBlank()) return ZoneOffset.UTC;
         try {
             return ZoneId.of(ianaTz);
