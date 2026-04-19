@@ -1,6 +1,17 @@
 import { useEffect, useRef } from 'react';
-import { Html5Qrcode } from 'html5-qrcode';
+import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import { scanBarcode } from '../../api';
+
+// Product-barcode formats only — narrower set = faster + more reliable decode,
+// especially on iPhone Safari where the default "every format" sweep stalls.
+const PRODUCT_FORMATS = [
+  Html5QrcodeSupportedFormats.EAN_13,
+  Html5QrcodeSupportedFormats.EAN_8,
+  Html5QrcodeSupportedFormats.UPC_A,
+  Html5QrcodeSupportedFormats.UPC_E,
+  Html5QrcodeSupportedFormats.CODE_128,
+  Html5QrcodeSupportedFormats.CODE_39,
+];
 
 export default function BarcodeScanner({ onResult, onLoading }) {
   const scannerRef = useRef(null);
@@ -11,7 +22,10 @@ export default function BarcodeScanner({ onResult, onLoading }) {
     mountedRef.current = true;
     const scannerId = 'barcode-reader';
 
-    const scanner = new Html5Qrcode(scannerId, { verbose: false });
+    const scanner = new Html5Qrcode(scannerId, {
+      verbose: false,
+      formatsToSupport: PRODUCT_FORMATS,
+    });
     scannerRef.current = scanner;
 
     async function startScanning() {
@@ -19,8 +33,15 @@ export default function BarcodeScanner({ onResult, onLoading }) {
         await scanner.start(
           { facingMode: 'environment' },
           {
-            fps: 10,
-            qrbox: { width: 250, height: 100 },
+            fps: 15,
+            qrbox: (viewfinderWidth, viewfinderHeight) => {
+              const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
+              return {
+                width: Math.floor(minEdge * 0.9),
+                height: Math.floor(minEdge * 0.45),
+              };
+            },
+            aspectRatio: 4 / 3,
           },
           async (decodedText) => {
             if (scanningRef.current || !mountedRef.current) return;
@@ -38,12 +59,11 @@ export default function BarcodeScanner({ onResult, onLoading }) {
               if (mountedRef.current) {
                 scanningRef.current = false;
                 onLoading(false);
-                // Restart scanning after failed lookup
                 startScanning();
               }
             }
           },
-          () => {} // ignore scan errors
+          () => {},
         );
       } catch (err) {
         console.error('Failed to start barcode scanner:', err);
