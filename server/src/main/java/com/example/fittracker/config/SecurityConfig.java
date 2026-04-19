@@ -51,6 +51,13 @@ public class SecurityConfig {
                 .requestMatchers("/oauth2/**", "/login/**").permitAll()
                 .anyRequest().authenticated()
             )
+            .sessionManagement(s -> s
+                // Keep the same JSESSIONID across authentication so the cookie the
+                // browser has from /oauth2/authorization/google stays valid after
+                // /login/oauth2/code/google — avoids relying on Vercel's proxy
+                // forwarding the new Set-Cookie on the post-login 302.
+                .sessionFixation(f -> f.none())
+            )
             .oauth2Login(o -> o
                 .userInfoEndpoint(u -> u.userService(allowlistUserService()))
                 .successHandler(successHandler())
